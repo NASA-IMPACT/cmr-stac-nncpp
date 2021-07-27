@@ -30,6 +30,9 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Install serverless
+        run: npm install -g serverless
+
       - name: Deploy
         env:
           STAGE: ${{ steps.extract_branch.outputs.branch }}
