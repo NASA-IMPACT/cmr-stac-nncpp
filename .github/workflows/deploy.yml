@@ -30,8 +30,10 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install serverless
-        run: npm install -g serverless
+      - name: Install serverless and plugin
+        run: |
+          npm install -g serverless
+          serverless plugin install --name serverless-offline
 
       - name: Deploy
         env:
