@@ -30,10 +30,9 @@ jobs:
         with:
           node-version: '14'
 
-      - name: Install serverless and plugin
+      - name: Install serverless
         run: |
           npm install -g serverless
-          serverless plugin install --name serverless-offline
 
       - name: Deploy
         env:
@@ -41,6 +40,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           cd search
+          serverless plugin install --name serverless-offline
           npm run deploy
       
       - run: echo "Successfully deployed."
