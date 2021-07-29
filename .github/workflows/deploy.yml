@@ -34,9 +34,18 @@ jobs:
         run: |
           npm install -g serverless
 
+      - name: Set stage to dit
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          echo "STAGE=dit" >> $GITHUB_ENV
+
+      - name: Set stage to branch name
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          echo "STAGE=${{ steps.extract_branch.outputs.branch }}" >> $GITHUB_ENV
+
       - name: Deploy
         env:
-          STAGE: ${{ steps.extract_branch.outputs.branch }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           cd search
