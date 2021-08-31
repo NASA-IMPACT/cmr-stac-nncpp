@@ -1,0 +1,54 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Configure AWS credentials from MAAP AWS Account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Set up node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install serverless
+        run: |
+          npm install -g serverless
+
+      - name: Set stage to dit
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          echo "STAGE=dit" >> $GITHUB_ENV
+
+      - name: Set stage to branch name
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          echo "STAGE=${{ steps.extract_branch.outputs.branch }}" >> $GITHUB_ENV
+
+      - name: Deploy
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          cd search
+          serverless plugin install --name serverless-offline
+          npm run deploy
+      
+      - run: echo "Successfully deployed."
