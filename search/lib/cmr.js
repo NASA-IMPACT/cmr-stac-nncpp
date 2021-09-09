@@ -40,9 +40,12 @@ async function cmrSearch (path, params) {
   // should be search path (e.g., granules.json, collections, etc)
   if (!path) throw new Error('Missing url');
   if (!params) throw new Error('Missing parameters');
-  const url = makeCmrSearchUrl(path);
-  logger.debug(`CMR Search: ${url} with params: ${JSON.stringify(params)}`);
-  return axios.get(url, { params, headers: DEFAULT_HEADERS });
+  const urls = makeCmrSearchUrl(path);
+  logger.debug(`CMR Search: ${urls} with params: ${JSON.stringify(params)}`);
+  const searchPromises = Promise.all(_.map(urls, url => axios.get(url), { params, headers: DEFAULT_HEADERS }));
+  const searchResults = await searchPromises;
+  const mergedResults = _.flatten(_.map(searchResults, 'data.feed.entry'));
+  return mergedResults;
 }
 
 /**
@@ -62,9 +65,11 @@ async function cmrSearchPost (path, params) {
  * Get list of providers
  */
 async function getProviderList () {
-  const providerUrl = `${settings.cmrUrl}/ingest/providers`;
-  const rawProviders = await axios.get(providerUrl);
-  return rawProviders.data;
+  const cmrRequests = Promise.all(
+    _.map(settings.cmrUrl, x => axios.get(`${x}/ingest/providers`)));
+  const rawProviders = await cmrRequests;
+  const jointProviders = _.flatten(_.map(rawProviders, 'data'));
+  return jointProviders;
 }
 
 /**
@@ -82,7 +87,7 @@ async function getProvider (providerId) {
  */
 async function findCollections (params = {}) {
   const response = await cmrSearch('/collections.json', params);
-  return response.data.feed.entry;
+  return response;
 }
 
 /**
