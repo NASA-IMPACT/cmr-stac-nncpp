@@ -8,6 +8,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: dit
     steps:
       - name: Extract branch name
         shell: bash
