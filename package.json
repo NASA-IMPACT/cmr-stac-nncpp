@@ -1,14 +1,14 @@
 {
   "name": "cmr-stac",
   "version": "1.0.0",
-  "description": "An implementation of the STAC API on top of MAAP's [Common Metadata Repository](https://cmr.maap-project.org/search/).",
+  "description": "An implementation of the STAC API on top of the NASA-NOAA Collaborative Platform Project [Common Metadata Repository](https://cmr.uat.nncpp.org/search).",
   "scripts": {
     "postinstall": "node bin/install.js;",
     "test": "jest --detectOpenHandles --forceExit --env=node --coverage --reporters=jest-junit --reporters=default",
     "start": "cd search; npm start",
     "lint": "cd search; npm run lint"
   },
-  "repository": "https://github.com/MAAP-Project/cmr-stac",
+  "repository": "https://github.com/NASA-IMPACT/cmr-stac-nncpp",
   "author": "Element 84",
   "license": "Apache-2.0",
   "devDependencies": {
