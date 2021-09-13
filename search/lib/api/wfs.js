@@ -202,6 +202,7 @@ async function getItems (request, response) {
     // convert STAC params to CMR Params
     const cmrParams = await cmr.convertParams(providerId, params);
 
+    let collectionsResult;
     let granulesResult = { granules: [], hits: 0 };
     const collectionsRequested = _.has(params, 'collections');
     const validCollections = _.has(cmrParams, 'collection_concept_id');
@@ -234,9 +235,18 @@ async function getItems (request, response) {
         }
         granulesResult = await cmr.findGranules(postSearchParams);
       } else {
-        granulesResult = await cmr.findGranules(cmrParams);
+        collectionsResult = await cmr.findCollections(cmrParams);
+        const searchPromises = _.map(collectionsResult, collection => {
+          return cmr.findGranules(Object.assign(cmrParams, { short_name: collection.short_name }));
+        });
+        // console.log("SEARCH PROMISES")
+        // console.log(searchPromises);
+        granulesResult = await Promise.all(searchPromises);
+        // console.log(granulesResult[0]);
       }
     }
+    console.log('granulesResult');
+    console.log(granulesResult);
 
     if (collectionId) {
       // remove the params.collections added.
