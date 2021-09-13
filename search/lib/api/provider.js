@@ -32,6 +32,7 @@ async function getProvider (request, response) {
     const { currPage, prevResultsLink, nextResultsLink } = generateNavLinks(event);
 
     // request.query is Used for pagination.
+    // AIMEE: no longer using providerId?
     const cmrParams = await cmr.convertParams(providerId, request.query);
 
     if (settings.cmrStacRelativeRootUrl === '/cloudstac') {

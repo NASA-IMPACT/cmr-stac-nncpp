@@ -12,7 +12,7 @@ async function search (request, response) {
 
 const routes = express.Router();
 
-routes.get('/:providerId/search', makeAsyncHandler(search));
+routes.get('/search', makeAsyncHandler(search));
 routes.post('/:providerId/search', makeAsyncHandler(search));
 
 module.exports = {
