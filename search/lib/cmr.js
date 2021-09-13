@@ -42,7 +42,8 @@ async function cmrSearch (path, params) {
   if (!params) throw new Error('Missing parameters');
   const urls = makeCmrSearchUrl(path);
   logger.debug(`CMR Search: ${urls} with params: ${JSON.stringify(params)}`);
-  const searchPromises = Promise.all(_.map(urls, url => axios.get(url), { params, headers: DEFAULT_HEADERS }));
+  const newParams = new URLSearchParams(params);
+  const searchPromises = Promise.all(_.map(urls, url => axios.get(url, { params: newParams, headers: DEFAULT_HEADERS })));
   const searchResults = await searchPromises;
   const mergedResults = _.flatten(_.map(searchResults, 'data.feed.entry'));
   return mergedResults;
@@ -108,6 +109,7 @@ async function findGranules (params = {}) {
     }),
     {}
   );
+
   // get UMM version
   if (settings.cmrStacRelativeRootUrl === '/cloudstac') {
     responseUmm = await cmrSearchPost('/granules.umm_json', params);
@@ -250,21 +252,6 @@ async function getGranuleTemporalFacets (params = {}, year, month, day) {
 }
 
 /**
- * Patch for Object.fromEntries which is introduced in NodeJS 12.
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries
- * @param entries Array of Name/Value pairs to be converted to object. e.g. [["name", "value"]]
- * @returns object e.g. {name: "value"}
- */
-function fromEntries (entries) {
-  if (!entries) throw new Error('Missing entries!');
-
-  return entries.reduce((obj, entry) => {
-    obj[entry[0]] = entry[1];
-    return obj;
-  }, {});
-}
-
-/**
  * Converts STAC parameter to equivalent CMR parameter
  * @param {string} providerId CMR Provider ID
  * @param {string} key The STAC field name
@@ -318,7 +305,7 @@ async function convertParams (providerId, params = {}) {
     }, []);
     logger.debug(`Params: ${JSON.stringify(params)}`);
     logger.debug(`Converted Params: ${JSON.stringify(converted)}`);
-    return Object.assign({ provider: providerId }, fromEntries(converted));
+    return converted;
   } catch (error) {
     logger.error(error.message);
     if (settings.throwCmrConvertParamErrors) {
