@@ -17,7 +17,7 @@ functions:
           path: /{proxy+}
           method: any
     environment:
-      CMR_URL: 'https://cmr.uat.nncpp.org,https://cmr.maap-project.org'
+      CMR_URL: https://cmr.uat.nncpp.org,https://cmr.maap-project.org
       CMR_STAC_RELATIVE_ROOT_URL: /stac
       CMR_STAC_PROTOCOL: ${env:PROTOCOL, 'https'}
       LOG_LEVEL: info
