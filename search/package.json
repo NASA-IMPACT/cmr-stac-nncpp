@@ -37,10 +37,8 @@
   "scripts": {
     "debug": "export SLS_DEBUG=* && IS_LOCAL=true sls offline --config serverless.yml",
     "start": "IS_LOCAL=true sls offline --config serverless.yml --protocol http",
-    "deploy": "sls deploy --config serverless.yml",
-    "deploy-docs": "sls s3deploy -v  --config serverless-ngap.yml",
-    "ngap-deploy": "sls deploy --config serverless-ngap.yml",
-    "ngap-deploy-cloudstac": "sls deploy --config serverless-ngap-cloudstac.yml",
+    "deploy": "sls deploy --config serverless-nncpp.yml --subnetIds $SUBNET_IDS --securityGroupId $SECURITY_GROUP_ID",
+    "deploy-docs": "sls s3deploy -v  --config serverless-nncpp.yml",
     "remove": "sls remove --config serverless.yml",
     "lint": "eslint ./lib/** ./tests/** --fix",
     "test": "jest --env=node",

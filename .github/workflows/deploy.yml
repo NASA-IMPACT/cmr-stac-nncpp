@@ -47,6 +47,8 @@ jobs:
       - name: Deploy
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
+          SUBNET_IDS: ${{ secrets.SUBNET_IDS }}
+          SECURITY_GROUP_ID: ${{ secrets.SECURITY_GROUP_ID }}
         run: |
           cd search
           serverless plugin install --name serverless-offline
