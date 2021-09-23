@@ -61,7 +61,7 @@ function createLinks (event, cmrCollection) {
       'Root catalog'),
     wfs.createLink('parent', generateAppUrl(event, `/${provider}`),
       'Parent catalog'),
-    wfs.createLink('items', generateAppUrl(event, `/${provider}/collections/${cmrCollection.stacId}/items`),
+    wfs.createLink('items', makeCmrSearchUrl(`/granules.umm_json?short_name=${cmrCollection.short_name}`),
       'Granules in this collection'),
     wfs.createLink('about', makeCmrSearchUrl(`/concepts/${cmrCollection.id}.html`),
       'HTML metadata for collection'),

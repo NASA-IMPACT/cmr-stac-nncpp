@@ -47,7 +47,8 @@ async function getCollections (request, response) {
       description = `All collections provided by ${provider}`;
     }
 
-    const collections = await cmr.findCollections(cmrParams);
+    // find collections from both stac APIs here
+    const collections = (await cmr.findCollections(cmrParams)).data.feed.entry;
 
     const collectionsResponse = {
       id: provider,
@@ -91,7 +92,6 @@ async function getCollection (request, response) {
   const event = request.apiGateway.event;
   const providerId = request.params.providerId;
   const collectionId = request.params.collectionId;
-
   try {
     // convert collection ID to CMR <short_name> and <version>
     const cmrParams = cmr.stacCollectionToCmrParams(providerId, collectionId);
@@ -202,7 +202,6 @@ async function getItems (request, response) {
     // convert STAC params to CMR Params
     const cmrParams = await cmr.convertParams(providerId, params);
 
-    let collectionsResult;
     let granulesResult = { granules: [], hits: 0 };
     const collectionsRequested = _.has(params, 'collections');
     const validCollections = _.has(cmrParams, 'collection_concept_id');
@@ -235,18 +234,9 @@ async function getItems (request, response) {
         }
         granulesResult = await cmr.findGranules(postSearchParams);
       } else {
-        collectionsResult = await cmr.findCollections(cmrParams);
-        const searchPromises = _.map(collectionsResult, collection => {
-          console.log(cmrParams);
-          const granuleSearchParams = cmrParams.concat([['short_name', collection.short_name]]);
-          console.log(granuleSearchParams);
-          return cmr.findGranules(granuleSearchParams);
-        });
-        granulesResult = await Promise.all(searchPromises);
+        granulesResult = await cmr.findGranules(cmrParams);
       }
     }
-    console.log('granulesResult');
-    console.log(granulesResult);
 
     if (collectionId) {
       // remove the params.collections added.

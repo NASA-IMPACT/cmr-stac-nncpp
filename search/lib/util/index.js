@@ -81,11 +81,8 @@ function makeAsyncHandler (fn) {
   };
 }
 
-const makeCmrSearchUrl = (path, queryParams = null) => {
-  return _.map(settings.cmrUrl, x => buildUrl(x + '/search', {
-    path,
-    queryParams
-  }));
+const makeCmrSearchUrl = (cmrUrl = '', path, queryParams = null) => {
+  return buildUrl(cmrUrl + '/search', { path, queryParams });
 };
 
 function firstIfArray (value) {

@@ -36,17 +36,14 @@ const DEFAULT_HEADERS = {
  * @param {string} path CMR path to append to search URL (e.g., granules.json, collections.json)
  * @param {object} params Set of CMR parameters
  */
-async function cmrSearch (path, params) {
+async function cmrSearch (cmrUrl, path, params) {
   // should be search path (e.g., granules.json, collections, etc)
   if (!path) throw new Error('Missing url');
   if (!params) throw new Error('Missing parameters');
-  const urls = makeCmrSearchUrl(path);
-  logger.debug(`CMR Search: ${urls} with params: ${JSON.stringify(params)}`);
+  const url = makeCmrSearchUrl(cmrUrl, path);
+  logger.debug(`CMR Search: ${url} with params: ${JSON.stringify(params)}`);
   const newParams = new URLSearchParams(params);
-  const searchPromises = Promise.all(_.map(urls, url => axios.get(url, { params: newParams, headers: DEFAULT_HEADERS })));
-  const searchResults = await searchPromises;
-  const mergedResults = _.flatten(_.map(searchResults, 'data.feed.entry'));
-  return mergedResults;
+  return axios.get(url, { params: newParams, headers: DEFAULT_HEADERS });
 }
 
 /**
@@ -87,7 +84,7 @@ async function getProvider (providerId) {
  * @param {object} params CMR Query parameters
  */
 async function findCollections (params = {}) {
-  const response = await cmrSearch('/collections.json', params);
+  const response = await cmrSearch(settings.cmrUrl[0], '/collections.json', params);
   return response;
 }
 
@@ -181,9 +178,9 @@ async function stacIdToCmrCollectionId (providerId, stacId) {
  */
 function cmrCollectionToStacId (shortName, version = null) {
   const invalidVersions = ['Not provided', 'NA'];
-  if (version && !invalidVersions.includes(version)) {
-    return `${shortName}.v${version}`;
-  }
+  // if (version && !invalidVersions.includes(version)) {
+  //   return `${shortName}.v${version}`;
+  // }
   return shortName;
 }
 
