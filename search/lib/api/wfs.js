@@ -237,12 +237,12 @@ async function getItems (request, response) {
       } else {
         collectionsResult = await cmr.findCollections(cmrParams);
         const searchPromises = _.map(collectionsResult, collection => {
-          return cmr.findGranules(Object.assign(cmrParams, { short_name: collection.short_name }));
+          console.log(cmrParams);
+          const granuleSearchParams = cmrParams.concat([['short_name', collection.short_name]]);
+          console.log(granuleSearchParams);
+          return cmr.findGranules(granuleSearchParams);
         });
-        // console.log("SEARCH PROMISES")
-        // console.log(searchPromises);
         granulesResult = await Promise.all(searchPromises);
-        // console.log(granulesResult[0]);
       }
     }
     console.log('granulesResult');
@@ -377,6 +377,7 @@ async function getCatalog (request, response) {
 function createRoutes (cfg = {}) {
   const routes = express.Router();
   routes.get('/:providerId/collections', makeAsyncHandler(getCollections));
+  routes.get('/:providerId/items', makeAsyncHandler(getItems));
   routes.get('/:providerId/collections/:collectionId', makeAsyncHandler(getCollection));
   routes.get('/:providerId/collections/:collectionId/items', makeAsyncHandler(getItems));
   routes.get('/:providerId/collections/:collectionId/items/:itemId', makeAsyncHandler(getItem));
