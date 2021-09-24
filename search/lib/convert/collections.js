@@ -55,12 +55,12 @@ function createLinks (event, cmrCollection, cmrUrl) {
   const provider = cmrCollection.data_center;
 
   const links = [
-    wfs.createLink('self', generateAppUrl(event, `/${provider}/collections/${cmrCollection.stacId}`),
-      'Info about this collection'),
-    wfs.createLink('root', generateAppUrl(event, ''),
-      'Root catalog'),
-    wfs.createLink('parent', generateAppUrl(event, `/${provider}`),
-      'Parent catalog'),
+    // wfs.createLink('self', generateAppUrl(event, `/${provider}/collections/${cmrCollection.stacId}`),
+    //   'Info about this collection'),
+    // wfs.createLink('root', generateAppUrl(event, ''),
+    //   'Root catalog'),
+    // wfs.createLink('parent', generateAppUrl(event, `/${provider}`),
+    //   'Parent catalog'),
     wfs.createLink('items', makeCmrSearchUrl(cmrUrl, `/granules.umm_json?short_name=${cmrCollection.short_name}`),
       'Granules in this collection'),
     wfs.createLink('about', makeCmrSearchUrl(cmrUrl, `/concepts/${cmrCollection.id}.html`),

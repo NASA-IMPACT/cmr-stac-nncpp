@@ -94,7 +94,7 @@ async function getCollections (request, response) {
  * Fetch a collection from CMR.
  */
 async function getCollection (request, response) {
-  logger.info(`GET /${request.params.providerId}/collections/${request.params.collectionId}`);
+  logger.info(`GET /collections/${request.params.collectionId}`);
   const event = request.apiGateway.event;
   const providerId = request.params.providerId;
   const collectionId = request.params.collectionId;
@@ -373,10 +373,10 @@ async function getCatalog (request, response) {
 function createRoutes (cfg = {}) {
   const routes = express.Router();
   routes.get('/:providerId/collections', makeAsyncHandler(getCollections));
-  routes.get('/:providerId/items', makeAsyncHandler(getItems));
-  routes.get('/:providerId/collections/:collectionId', makeAsyncHandler(getCollection));
-  routes.get('/:providerId/collections/:collectionId/items', makeAsyncHandler(getItems));
-  routes.get('/:providerId/collections/:collectionId/items/:itemId', makeAsyncHandler(getItem));
+  // routes.get('/:providerId/items', makeAsyncHandler(getItems));
+  // routes.get('/collections/:collectionId', makeAsyncHandler(getCollection));
+  // routes.get('/:providerId/collections/:collectionId/items', makeAsyncHandler(getItems));
+  // routes.get('/:providerId/collections/:collectionId/items/:itemId', makeAsyncHandler(getItem));
 
   if (cfg.BROWSE_PATH !== undefined) {
     routes.get('/:providerId/collections/:collectionId/*', makeAsyncHandler(getCatalog));
