@@ -33,6 +33,7 @@ const DEFAULT_HEADERS = {
 
 /**
  * Query a CMR Search endpoint with optional parameters
+ * @param {string} cmrUrl CMR search URL
  * @param {string} path CMR path to append to search URL (e.g., granules.json, collections.json)
  * @param {object} params Set of CMR parameters
  */
@@ -83,8 +84,8 @@ async function getProvider (providerId) {
  * Search CMR for collections matching query parameters
  * @param {object} params CMR Query parameters
  */
-async function findCollections (params = {}) {
-  const response = await cmrSearch(settings.cmrUrl[0], '/collections.json', params);
+async function findCollections (cmrUrl, params = {}) {
+  const response = await cmrSearch(cmrUrl, '/collections.json', params);
   return response;
 }
 
@@ -177,7 +178,7 @@ async function stacIdToCmrCollectionId (providerId, stacId) {
  * @param {string} collectionId CMR Collection ID
  */
 function cmrCollectionToStacId (shortName, version = null) {
-  const invalidVersions = ['Not provided', 'NA'];
+  // const invalidVersions = ['Not provided', 'NA'];
   // if (version && !invalidVersions.includes(version)) {
   //   return `${shortName}.v${version}`;
   // }

@@ -48,7 +48,13 @@ async function getCollections (request, response) {
     }
 
     // find collections from both stac APIs here
-    const collections = (await cmr.findCollections(cmrParams)).data.feed.entry;
+    const collections = _.flatten(await Promise.all(
+      _.map(settings.cmrUrl, async (cmrUrl) => {
+        const collectionsForOneCmr = await cmr.findCollections(cmrUrl, cmrParams);
+        const collectionsEntry = collectionsForOneCmr.data.feed.entry;
+        return _.map(collectionsEntry, coll => convert.cmrCollToWFSColl(event, coll, cmrUrl));
+      })
+    ));
 
     const collectionsResponse = {
       id: provider,
@@ -61,7 +67,7 @@ async function getCollections (request, response) {
           `${description}`),
         wfs.createLink('root', generateAppUrl(event, '/'), `${rootName}`)
       ],
-      collections: collections.map(coll => convert.cmrCollToWFSColl(event, coll))
+      collections
     };
 
     if (currPage > 1 && collectionsResponse.links.length > 1) {

@@ -22,14 +22,15 @@ functions:
           path: /{proxy+}
           method: any
     environment:
-      CMR_URL: https://d1as4b7kqtf0ev.cloudfront.net,https://ncis-cmr.nesdis-hq.noaa.gov
-      # CMR_URL: https://cmr.uat.nncpp.org,https://cmr.maap-project.org
+      CMR_URL: https://cmr.dev.nncpp.org,https://ncis-cmr.nesdis-hq.noaa.gov
       CMR_STAC_RELATIVE_ROOT_URL: /stac
       CMR_STAC_PROTOCOL: ${env:PROTOCOL, 'https'}
       LOG_LEVEL: info
       LOG_DISABLED: false
       STAC_VERSION: 1.0.0
       BROWSE_PATH: year/month/day
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
+
 
 resources:
   Resources:

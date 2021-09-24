@@ -51,7 +51,7 @@ function createExtent (cmrCollection) {
   };
 }
 
-function createLinks (event, cmrCollection) {
+function createLinks (event, cmrCollection, cmrUrl) {
   const provider = cmrCollection.data_center;
 
   const links = [
@@ -61,17 +61,17 @@ function createLinks (event, cmrCollection) {
       'Root catalog'),
     wfs.createLink('parent', generateAppUrl(event, `/${provider}`),
       'Parent catalog'),
-    wfs.createLink('items', makeCmrSearchUrl(`/granules.umm_json?short_name=${cmrCollection.short_name}`),
+    wfs.createLink('items', makeCmrSearchUrl(cmrUrl, `/granules.umm_json?short_name=${cmrCollection.short_name}`),
       'Granules in this collection'),
-    wfs.createLink('about', makeCmrSearchUrl(`/concepts/${cmrCollection.id}.html`),
+    wfs.createLink('about', makeCmrSearchUrl(cmrUrl, `/concepts/${cmrCollection.id}.html`),
       'HTML metadata for collection'),
-    wfs.createLink('via', makeCmrSearchUrl(`/concepts/${cmrCollection.id}.json`),
+    wfs.createLink('via', makeCmrSearchUrl(cmrUrl, `/concepts/${cmrCollection.id}.json`),
       'CMR JSON metadata for collection')
   ];
   return links;
 }
 
-function cmrCollToWFSColl (event, cmrCollection) {
+function cmrCollToWFSColl (event, cmrCollection, cmrUrl) {
   if (!cmrCollection) return [];
   const stacId = cmr.cmrCollectionToStacId(cmrCollection.short_name, cmrCollection.version_id);
   cmrCollection.stacId = stacId;
@@ -82,7 +82,7 @@ function cmrCollToWFSColl (event, cmrCollection) {
     title: cmrCollection.dataset_id,
     type: 'Collection',
     description: cmrCollection.summary,
-    links: createLinks(event, cmrCollection),
+    links: createLinks(event, cmrCollection, cmrUrl),
     extent: createExtent(cmrCollection)
   };
   return collection;
